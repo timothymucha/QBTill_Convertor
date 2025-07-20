@@ -31,6 +31,7 @@ if uploaded_file:
         output = StringIO()
         output.write("!TRNS\tTRNSTYPE\tDATE\tACCNT\tNAME\tAMOUNT\tMEMO\n")
         output.write("!SPL\tTRNSTYPE\tDATE\tACCNT\tNAME\tAMOUNT\tMEMO\n")
+        output.write("!ENDTRNS\n")
 
         for _, row in df.iterrows():
             date_str = row['Completion Time'].strftime('%m/%d/%Y') if pd.notnull(row['Completion Time']) else None
