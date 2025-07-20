@@ -3,11 +3,11 @@ import pandas as pd
 from io import StringIO
 from datetime import datetime
 
-st.set_page_config(page_title="Bank Statement to QuickBooks IIF", layout="wide")
+st.set_page_config(page_title="Mnaani Mpesa Statement to QuickBooks IIF", layout="wide")
 
-st.title("📄 Convert Bank Statement to QuickBooks IIF")
+st.title("📄 Convert Mnaani Mpesa Statement to QuickBooks IIF")
 
-uploaded_file = st.file_uploader("Upload bank statement (.csv or .xlsx)", type=["csv", "xlsx"])
+uploaded_file = st.file_uploader("Upload Mpesa statement (.csv or .xlsx)", type=["csv", "xlsx"])
 
 if uploaded_file:
     try:
@@ -65,7 +65,7 @@ if uploaded_file:
 
         # Download link
         st.success("✅ IIF file generated successfully!")
-        st.download_button("📥 Download IIF File", data=output.getvalue(), file_name="bank_transactions.iif", mime="text/plain")
+        st.download_button("📥 Download IIF File", data=output.getvalue(), file_name="mpesa_transactions.iif", mime="text/plain")
 
     except Exception as e:
         st.error(f"❌ Error processing file: {e}")
