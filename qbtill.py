@@ -64,7 +64,8 @@ uploaded_file = st.file_uploader("📁 Upload your bank statement (CSV only)", t
 if uploaded_file:
     try:
         # Load and clean CSV
-        df = pd.read_csv(uploaded_file)
+        df = pd.read_csv(uploaded_file, skiprows=6)
+
         df = clean_column_names(df)
 
         st.success("✅ File uploaded successfully!")
