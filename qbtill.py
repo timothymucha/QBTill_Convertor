@@ -5,7 +5,7 @@ from datetime import datetime
 
 st.set_page_config(page_title="Mnarani Mpesa Statement to QuickBooks IIF", layout="wide")
 
-st.title("📄 Convert Mnaani Mpesa Statement to QuickBooks IIF")
+st.title("📄 Convert Mnarani Mpesa Statement to QuickBooks IIF")
 
 uploaded_file = st.file_uploader("Upload Mpesa statement (.csv or .xlsx)", type=["csv", "xlsx"])
 
