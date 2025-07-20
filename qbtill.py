@@ -60,7 +60,7 @@ if uploaded_file:
                 # Bank Fee
                 amount = abs(row['Withdrawn'])
                 output.write(f"TRNS\tCHECK\t{date_str}\tMpesa Till\tBank Charges\t{-amount:.2f}\t{memo}\n")
-                output.write(f"SPL\tCHECK\t{date_str}\tBankFees\t\t{amount:.2f}\t{memo}\n")
+                output.write(f"SPL\tCHECK\t{date_str}\tBank Service Charges\t\t{amount:.2f}\t{memo}\n")
                 output.write("ENDTRNS\n")
 
         # Download link
