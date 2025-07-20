@@ -35,7 +35,7 @@ if uploaded_file:
                 output.write("ENDTRNS\n")
 
             # 2. BANK FEES
-            elif withdrawn > 0 and "charge" in details.lower():
+            elif withdrawn > 0 and "pay merchant charge" in details.lower():
                 output.write(f"TRNS\tGENERAL JOURNAL\t{date}\tMpesa Till\t{name}\t-{withdrawn:.2f}\t{memo}\n")
                 output.write(f"SPL\tGENERAL JOURNAL\t{date}\tBank Fees\t{name}\t{withdrawn:.2f}\t{memo}\n")
                 output.write("ENDTRNS\n")
