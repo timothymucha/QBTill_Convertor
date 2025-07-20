@@ -3,7 +3,7 @@ import pandas as pd
 from io import StringIO
 from datetime import datetime
 
-st.set_page_config(page_title="Mnaani Mpesa Statement to QuickBooks IIF", layout="wide")
+st.set_page_config(page_title="Mnarani Mpesa Statement to QuickBooks IIF", layout="wide")
 
 st.title("📄 Convert Mnaani Mpesa Statement to QuickBooks IIF")
 
