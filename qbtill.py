@@ -52,8 +52,8 @@ if uploaded_file:
             elif "merchant account to organization settlement account" in details.lower():
                 # DTB Transfer
                 amount = abs(row['Withdrawn'])
-                output.write(f"TRNS\tTRANSFER\t{date_str}\tMpesa Till\tDTB Bank\t{-amount:.2f}\t{memo}\n")
-                output.write(f"SPL\tTRANSFER\t{date_str}\tDTB Bank\tMpesa Till\t{amount:.2f}\t{memo}\n")
+                output.write(f"TRNS\tTRANSFER\t{date_str}\tMpesa Till\tDiamond Trust Bank\t{-amount:.2f}\t{memo}\n")
+                output.write(f"SPL\tTRANSFER\t{date_str}\tDiamond Trust Bank\tMpesa Till\t{amount:.2f}\t{memo}\n")
                 output.write("ENDTRNS\n")
 
             elif row['Withdrawn'] < 0:
