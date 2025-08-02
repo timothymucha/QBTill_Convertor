@@ -46,7 +46,7 @@ if uploaded_file:
             if pd.isnull(row['Completion Time']):
                 continue  # Skip rows without valid date
 
-            date_str = row['Completion Time'].strftime('%m/%d/%Y')
+            date_str = row['Completion Time'].strftime('%d/%m/%Y')
             details = str(row.get("Details", "")).strip()
             other_info = str(row.get("Other Party Info", "")).strip()
             memo = f"{other_info} | {details}".strip(" |")
