@@ -74,8 +74,8 @@ if uploaded_file:
             memo = "Pay merchant Charge summary"
             amount = row['Withdrawn']
 
-            output.write(f"TRNS\tCHECK\t{date_str}\tMpesa Till\tBank Charges - Mpesa\t{-amount:.2f}\t{memo}\n")
-            output.write(f"SPL\tCHECK\t{date_str}\tBank Service Charges:Bank Charges - Mpesa\t\t{amount:.2f}\t{memo}\n")
+            output.write(f"TRNS\tCHECK\t{date_str}\tMpesa Till\tBank Charges - Mpesa\t{amount:.2f}\t{memo}\n")
+            output.write(f"SPL\tCHECK\t{date_str}\tBank Service Charges:Bank Charges - Mpesa\t\t{-amount:.2f}\t{memo}\n")
             output.write("ENDTRNS\n")
 
         # 4️⃣ Other Withdrawals → Bank Service Charges generic
