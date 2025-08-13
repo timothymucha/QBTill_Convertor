@@ -46,7 +46,7 @@ if uploaded_file:
         # 1️⃣ Payments from Walk In
         payments_df = df[df['Paid In'] > 0]
         for _, row in payments_df.iterrows():
-            date_str = row['Completion Time'].strftime('%d/%m/%Y')
+            date_str = row['Completion Time'].strftime('%m/%d/%y')
             memo = f"{row['Other Party Info']} | {row['Details']}".strip(" |")
             amount = row['Paid In']
 
@@ -57,7 +57,7 @@ if uploaded_file:
         # 2️⃣ DTB Transfers
         transfers_df = df[df['Details'].str.lower().str.contains("merchant account to organization settlement account")]
         for _, row in transfers_df.iterrows():
-            date_str = row['Completion Time'].strftime('%d/%m/%Y')
+            date_str = row['Completion Time'].strftime('%m/%d/%y')
             memo = f"{row['Other Party Info']} | {row['Details']}".strip(" |")
             amount = abs(row['Withdrawn'])
 
@@ -70,7 +70,7 @@ if uploaded_file:
         charges_summary = charges_df.groupby(charges_df['Completion Time'].dt.date)['Withdrawn'].sum().reset_index()
 
         for _, row in charges_summary.iterrows():
-            date_str = pd.to_datetime(row['Completion Time']).strftime('%d/%m/%Y')
+            date_str = pd.to_datetime(row['Completion Time']).strftime('%m/%d/%y')
             memo = "Pay merchant Charge summary"
             amount = row['Withdrawn']
 
@@ -85,7 +85,7 @@ if uploaded_file:
             (~df['Details'].str.strip().str.lower().eq("pay merchant charge"))
         ]
         for _, row in other_withdrawals.iterrows():
-            date_str = row['Completion Time'].strftime('%d/%m/%Y')
+            date_str = row['Completion Time'].strftime('%m/%d/%y')
             memo = f"{row['Other Party Info']} | {row['Details']}".strip(" |")
             amount = row['Withdrawn']
 
