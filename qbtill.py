@@ -6,12 +6,29 @@ from datetime import datetime
 st.set_page_config(page_title="Mnarani Mpesa Statement to QuickBooks IIF", layout="wide")
 st.title("📄 Convert Mnarani Mpesa Statement to QuickBooks IIF")
 
+def fmt_date(dt):
+    """Return date formatted as MM/DD/YYYY, or fallback to string if not parseable."""
+    try:
+        # Use pandas to coerce many input types (Timestamp, date, string)
+        ts = pd.to_datetime(dt, errors="coerce")
+        if pd.isna(ts):
+            # fallback to original string representation
+            s = str(dt)
+            # try a final parse for formats like 'YYYY-MM-DD'
+            try:
+                return datetime.strptime(s.split()[0], "%Y-%m-%d").strftime("%m/%d/%Y")
+            except Exception:
+                return s
+        return ts.strftime("%m/%d/%Y")
+    except Exception:
+        return str(dt)
+
 uploaded_file = st.file_uploader("Upload Mpesa statement (.csv or .xlsx)", type=["csv", "xlsx"])
 
 if uploaded_file:
     try:
         # Drop first 6 rows (metadata) before reading
-        if uploaded_file.name.endswith(".csv"):
+        if uploaded_file.name.lower().endswith(".csv"):
             df = pd.read_csv(uploaded_file, skiprows=6)
         else:
             df = pd.read_excel(uploaded_file, skiprows=6)
@@ -46,7 +63,7 @@ if uploaded_file:
         # 1️⃣ Payments from Walk In
         payments_df = df[df['Paid In'] > 0]
         for _, row in payments_df.iterrows():
-            date_str = row['Completion Time'].strftime('%m/%d/%y')
+            date_str = fmt_date(row['Completion Time'])
             memo = f"{row['Other Party Info']} | {row['Details']}".strip(" |")
             amount = row['Paid In']
 
@@ -55,9 +72,9 @@ if uploaded_file:
             output.write("ENDTRNS\n")
 
         # 2️⃣ DTB Transfers
-        transfers_df = df[df['Details'].str.lower().str.contains("merchant account to organization settlement account")]
+        transfers_df = df[df['Details'].str.lower().str.contains("merchant account to organization settlement account", na=False)]
         for _, row in transfers_df.iterrows():
-            date_str = row['Completion Time'].strftime('%m/%d/%y')
+            date_str = fmt_date(row['Completion Time'])
             memo = f"{row['Other Party Info']} | {row['Details']}".strip(" |")
             amount = abs(row['Withdrawn'])
 
@@ -67,30 +84,33 @@ if uploaded_file:
 
         # 3️⃣ Pay merchant Charge → summarized by date
         charges_df = df[df['Details'].str.strip().str.lower() == "pay merchant charge"]
-        charges_summary = charges_df.groupby(charges_df['Completion Time'].dt.date)['Withdrawn'].sum().reset_index()
+        if not charges_df.empty:
+            charges_summary = charges_df.groupby(charges_df['Completion Time'].dt.date)['Withdrawn'].sum().reset_index()
+            for _, row in charges_summary.iterrows():
+                # row['Completion Time'] here is a date object; format safely via fmt_date
+                date_str = fmt_date(row['Completion Time'])
+                memo = "Pay merchant Charge summary"
+                amount = row['Withdrawn']
 
-        for _, row in charges_summary.iterrows():
-            date_str = pd.to_datetime(row['Completion Time']).strftime('%m/%d/%y')
-            memo = "Pay merchant Charge summary"
-            amount = row['Withdrawn']
-
-            output.write(f"TRNS\tCHECK\t{date_str}\tMpesa Till\tBank Charges - Mpesa\t{amount:.2f}\t{memo}\n")
-            output.write(f"SPL\tCHECK\t{date_str}\tBank Service Charges:Bank Charges - Mpesa\t\t{-amount:.2f}\t{memo}\n")
-            output.write("ENDTRNS\n")
+                # Use Safaricom as vendor name for bank charges and the account as Bank Service Charges:Bank Charges - Mpesa
+                output.write(f"TRNS\tCHECK\t{date_str}\tMpesa Till\tSafaricom\t{-amount:.2f}\t{memo}\n")
+                output.write(f"SPL\tCHECK\t{date_str}\tBank Service Charges:Bank Charges - Mpesa\tSafaricom\t{amount:.2f}\t{memo}\n")
+                output.write("ENDTRNS\n")
 
         # 4️⃣ Other Withdrawals → Bank Service Charges generic
         other_withdrawals = df[
             (df['Withdrawn'] > 0) &
-            (~df['Details'].str.lower().str.contains("merchant account to organization settlement account")) &
+            (~df['Details'].str.lower().str.contains("merchant account to organization settlement account", na=False)) &
             (~df['Details'].str.strip().str.lower().eq("pay merchant charge"))
         ]
         for _, row in other_withdrawals.iterrows():
-            date_str = row['Completion Time'].strftime('%m/%d/%y')
+            date_str = fmt_date(row['Completion Time'])
             memo = f"{row['Other Party Info']} | {row['Details']}".strip(" |")
             amount = row['Withdrawn']
 
-            output.write(f"TRNS\tCHECK\t{date_str}\tMpesa Till\tBank Charges\t{-amount:.2f}\t{memo}\n")
-            output.write(f"SPL\tCHECK\t{date_str}\tBank Service Charges\t\t{amount:.2f}\t{memo}\n")
+            # Use Safaricom as vendor (or you can decide a different vendor if available in Other Party Info)
+            output.write(f"TRNS\tCHECK\t{date_str}\tMpesa Till\tSafaricom\t{-amount:.2f}\t{memo}\n")
+            output.write(f"SPL\tCHECK\t{date_str}\tBank Service Charges\tSafaricom\t{amount:.2f}\t{memo}\n")
             output.write("ENDTRNS\n")
 
         # Totals
