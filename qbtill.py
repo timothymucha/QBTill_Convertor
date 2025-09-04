@@ -19,7 +19,7 @@ def fmt_date(dt):
                 return datetime.strptime(s.split()[0], "%Y-%m-%d").strftime("%m/%d/%Y")
             except Exception:
                 return s
-        return ts.strftime("%m/%d/%Y")
+        return ts.strftime("%d/%m/%Y")
     except Exception:
         return str(dt)
 
