@@ -109,8 +109,8 @@ if uploaded_file:
             amount = row['Withdrawn']
 
             # Use Safaricom as vendor (or you can decide a different vendor if available in Other Party Info)
-            output.write(f"TRNS\tCHECK\t{date_str}\tMpesa Till\tMpesa\t{amount:.2f}\t{memo}\n")
-            output.write(f"SPL\tCHECK\t{date_str}\tBank Service Charges:Bank Charges - Mpesa\tMpesa\t{-amount:.2f}\t{memo}\n")
+            output.write(f"TRNS\tCHECK\t{date_str}\tMpesa Till\tMpesa\t{-amount:.2f}\t{memo}\n")
+            output.write(f"SPL\tCHECK\t{date_str}\tBank Service Charges:Bank Charges - Mpesa\tMpesa\t{amount:.2f}\t{memo}\n")
             output.write("ENDTRNS\n")
 
         # Totals
